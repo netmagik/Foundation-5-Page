@@ -7,10 +7,18 @@ module.exports = function(grunt) {
 
       sass: {
         files: 'scss/*.scss',
-        tasks: ['sass'],
+        tasks: ['sass:dev'],
         options : {
           spawn : false,
         }
+      },
+
+      scripts : {
+        files : ['js/dev/app.js', 'js/dev/test.js'],
+        tasks : ['concat', 'uglify'],
+        options : {
+          spawn : false,
+        },
       },
 
       images : {
@@ -18,21 +26,43 @@ module.exports = function(grunt) {
         tasks : ['newer:imagemin']
       }, // watch images added to src folder
 
-    },
+    }, // END OF WATCH SCRIPTS
 
+    // TASKS
+
+    concat : {
+      dist : {
+        src: ['js/dev/app.js', 'js/dev/test.js'],
+        dest: 'js/prod/output.js'
+      }
+    }, //end concat
+
+     uglify : {
+      dist : {
+        src : 'js/prod/output.js',
+        dest : 'js/prod/output.min.js'
+      }
+    }, //end uglify
 
     sass: {
       options: {
         includePaths: ['bower_components/foundation/scss']
       },
-      dist: {
+      dev: {
         options: {
-          outputStyle: 'compressed',
-          sourcemap: 'true'
+          outputStyle: 'expanded',
+          sourceMap: 'true'
         },
         files: {
-          'css/app.css': 'scss/app.scss'
+          'css/dev/app.css': 'scss/app.scss'
         }
+      },
+      build: {
+        options: {
+          sourceMap: false,
+          outputStyle: 'compressed'
+        },
+        files: { 'css/prod/app.css' : 'scss/app.scss'}
       }
     },
 
@@ -51,7 +81,7 @@ module.exports = function(grunt) {
     browserSync : {
       dev : {
         bsFiles : {
-          src : ['css/*.css', 'images/*.*', 'js/*.js', '*.html']
+          src : ['css/*.css', 'images/*.*', 'js/prod/output.min.js', '*.html']
         },
         options : {
           server : {
@@ -62,15 +92,18 @@ module.exports = function(grunt) {
         }
       }
     }
-  });
+  }); /*end of watch scripts*/
 
   grunt.loadNpmTasks('grunt-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-imagemin');
   grunt.loadNpmTasks('grunt-newer');
   grunt.loadNpmTasks('grunt-browser-sync');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
 
 //  grunt.registerTask('build', ['sass']);
   //grunt.registerTask('default', ['build','watch']);
   grunt.registerTask('default', ["browserSync", "watch"]);
+ // grunt.registerTask('build', ["sass:build", "uglify"]);
 }
