@@ -5,9 +5,9 @@ module.exports = function(grunt) {
     watch: {
       grunt: { files: ['Gruntfile.js'] },
 
-      sass: {
-        files: 'scss/*.scss',
-        tasks: ['sass:dev'],
+      css: {
+        files: 'scss/**/*.scss',
+        tasks: ['sass:dev', 'sass:build'],
         options : {
           spawn : false,
         }
@@ -81,29 +81,26 @@ module.exports = function(grunt) {
     browserSync : {
       dev : {
         bsFiles : {
-          src : ['css/*.css', 'images/*.*', 'js/prod/output.min.js', '*.html']
+          src : ['css/**/*.css', 'images/*.*', 'js/prod/output.min.js', '*.html']
         },
         options : {
-          server : {
-            baseDir : "./"
-
-          },
-          watchTask : true // < VERY important
+          watchTask : true, // < VERY important
+          server : "./"
         }
       }
     }
   }); /*end of watch scripts*/
 
-  grunt.loadNpmTasks('grunt-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-browser-sync');
   grunt.loadNpmTasks('grunt-contrib-imagemin');
   grunt.loadNpmTasks('grunt-newer');
-  grunt.loadNpmTasks('grunt-browser-sync');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-sass');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
 //  grunt.registerTask('build', ['sass']);
   //grunt.registerTask('default', ['build','watch']);
   grunt.registerTask('default', ["browserSync", "watch"]);
- // grunt.registerTask('build', ["sass:build", "uglify"]);
+ //grunt.registerTask('build', ["sass:build", "uglify"]);
 }
